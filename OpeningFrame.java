@@ -75,7 +75,7 @@ public class OpeningFrame extends JFrame {
 		colorselect = new JComboBox<>(rgb);
 		top.add(colorselect);
 		
-		String[] sizes = {"128", "64", "32", "16", "8"};
+		String[] sizes = {"4", "8", "16", "32", "64", "128"};
 		rows = new JComboBox<>(sizes);
 		cols = new JComboBox<>(sizes);
 		top.add(new JLabel("# of Pixels:")); top.add(rows); 

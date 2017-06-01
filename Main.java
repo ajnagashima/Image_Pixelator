@@ -48,7 +48,7 @@ public class Main extends JFrame{
 		oFrame.dispose();
 		
 		makeGrid();
-		eFrame = new EditorFrame(pixels);
+		eFrame = new EditorFrame(pixels, oFrame.isRGB());
 	}
 	
 	void makeGrid(){
