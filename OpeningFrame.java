@@ -1,4 +1,3 @@
-
 /*
  * file: OpeningFrame.java
  * desc: provides an initial JFrame responsible for retrieveing an image
@@ -23,20 +22,25 @@ import java.io.File;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JTextField;
+import javax.swing.JComboBox;
+import javax.swing.JLabel;
 
 public class OpeningFrame extends JFrame {
-	JTextField textfield = new JTextField();
+	JTextField textfield = new JTextField("");
+	JComboBox<String> cols, rows, colorselect;
 	private boolean cbtnPressed = false;
 	
 	
 	public OpeningFrame() {
-		setSize(1000, 200);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		setLayout(new BorderLayout());
 		JPanel top = new JPanel();
-		JPanel bottom = new JPanel();
+		JPanel mid = new JPanel();
+		JPanel bot = new JPanel();
+		
+		mid.add(new JLabel("File: "));
 		
 		textfield.setColumns(20);
 		//setDropTarget for textfield
@@ -53,20 +57,34 @@ public class OpeningFrame extends JFrame {
 				} catch(Exception e) {e.printStackTrace();}
 			}
 		});
-		top.add(textfield);
+		mid.add(textfield);
 		
-		//NEED BUTTON LISTENER
+		add(mid, BorderLayout.CENTER);
+		
 		JButton confirmbtn = new JButton("confirm");
 		confirmbtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
 				cbtnPressed = true;
 			}
 		});
-		top.add(confirmbtn);
+		bot.add(confirmbtn);
 		
-		add(top, BorderLayout.CENTER);
+		add(bot, BorderLayout.SOUTH);
 		
-		getRootPane().setBorder(BorderFactory.createMatteBorder(4, 4, 4, 4, Color.BLACK));
+		String[] rgb = {"RGB", "Grey Scale"};
+		colorselect = new JComboBox<>(rgb);
+		top.add(colorselect);
+		
+		String[] sizes = {"128", "64", "32", "16", "8"};
+		rows = new JComboBox<>(sizes);
+		cols = new JComboBox<>(sizes);
+		top.add(new JLabel("# of Pixels:")); top.add(rows); 
+		top.add(new JLabel(" x ")); top.add(cols);
+		
+		add(top, BorderLayout.NORTH);
+		
+		pack();
+		getRootPane().setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
 		getContentPane().setBackground(Color.WHITE);
 		setVisible(true);
 	}
@@ -81,5 +99,15 @@ public class OpeningFrame extends JFrame {
 	
 	String getPath() {
 		return textfield.getText();
+	}
+	
+	int[] getDims(){
+		int[] dims = {Integer.parseInt((String)(rows.getSelectedItem())), 
+				Integer.parseInt((String)(cols.getSelectedItem()))};
+		return dims;
+	}
+	
+	boolean isRGB(){
+		return colorselect.getSelectedIndex() == 0 ? true : false;
 	}
 }

@@ -1,6 +1,6 @@
 /*
- * file: OpeningFrame.java
- * desc: provides an initial JFrame responsible for retrieveing an image
+ * file: EditorFrame.java
+ * desc: the JFrame in which pixel editing is done
  * Author: AJ Nagashima
  * email: ajn3687@g.rit.edu
  */
@@ -9,6 +9,7 @@ import javax.swing.JFrame;
 import javax.swing.BorderFactory;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.List;
 import java.awt.datatransfer.DataFlavor;
@@ -22,92 +23,62 @@ import java.io.File;
 import javax.swing.JPanel;
 import javax.swing.JButton;
 import javax.swing.JTextField;
-import javax.swing.JComboBox;
 import javax.swing.JLabel;
 
-public class OpeningFrame extends JFrame {
-	JTextField textfield = new JTextField("");
-	JComboBox<String> cols, rows, colorselect;
-	private boolean cbtnPressed = false;
+public class EditorFrame extends JFrame{
+	Color[][] pixels;
+	Color current = new Color(0,0,0);
 	
-	
-	public OpeningFrame() {
+	public EditorFrame(Color[][] p){
+		pixels = new Color[p.length][p[0].length];
+		for(int r = 0; r < pixels.length; r++)
+			for(int c = 0; c < pixels[0].length; c++)
+				pixels[r][c] = p[r][c];
+		
+		setSize(20*pixels.length + 200, 20*pixels[0].length+ 400);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-		setLayout(new BorderLayout());
-		JPanel top = new JPanel();
-		JPanel mid = new JPanel();
-		JPanel bot = new JPanel();
 		
-		mid.add(new JLabel("File: "));
+		setLayout(new GridLayout());
+		JPanel grid = new JPanel(new GridLayout(pixels.length, pixels[0].length));
+		JPanel colorSldr = new JPanel(new BorderLayout());
+		JPanel bottom = new JPanel();
 		
-		textfield.setColumns(20);
-		//setDropTarget for textfield
-		textfield.setDropTarget(new DropTarget() {
-			public synchronized void drop(DropTargetDropEvent d){
-				try{
-					d.acceptDrop(DnDConstants.ACTION_COPY);
-					List<File> dropped = (List<File>)d.getTransferable().
-							getTransferData(DataFlavor.javaFileListFlavor);
-					
-					File file = dropped.get(0);
-					
-					textfield.setText(file.getAbsolutePath());
-				} catch(Exception e) {e.printStackTrace();}
+		for(int r = 0; r < pixels.length; r++)
+			for(int c = 0; c < pixels[0].length; c++)
+			{
+				JButton temp = new JButton();
+				temp.setBackground(pixels[r][c]);
+				temp.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e){
+						temp.setBackground(current);
+					}
+				});
+				temp.setPreferredSize(new Dimension(20,20));
+				grid.add(temp, r, c);
 			}
-		});
-		mid.add(textfield);
 		
-		add(mid, BorderLayout.CENTER);
+		add(grid, BorderLayout.CENTER);
 		
-		JButton confirmbtn = new JButton("confirm");
-		confirmbtn.addActionListener(new ActionListener() {
+		JTextField savefield = new JTextField(20);
+		bottom.add(new JLabel("Save As: "));
+		bottom.add(savefield);
+		
+		JButton savebtn = new JButton("Save");
+		savebtn.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e){
-				cbtnPressed = true;
+				save(savefield.getText());
 			}
 		});
-		bot.add(confirmbtn);
-		
-		add(bot, BorderLayout.SOUTH);
-		
-		String[] rgb = {"RGB", "Grey Scale"};
-		colorselect = new JComboBox<>(rgb);
-		top.add(colorselect);
-		
-		String[] sizes = {"256", "128", "64", "32", "16", "8"};
-		rows = new JComboBox<>(sizes);
-		cols = new JComboBox<>(sizes);
-		top.add(new JLabel("# of Pixels:")); top.add(rows); 
-		top.add(new JLabel(" x ")); top.add(cols);
-		
-		add(top, BorderLayout.NORTH);
 		
 		pack();
-		getRootPane().setBorder(BorderFactory.createMatteBorder(2, 2, 2, 2, Color.BLACK));
+		getRootPane().setBorder(BorderFactory.createMatteBorder(2,2,2,2, Color.BLACK));
 		getContentPane().setBackground(Color.WHITE);
 		setVisible(true);
-	}
-
-	boolean confirmPressed(){
-		return cbtnPressed;
+		
 	}
 	
-	void confirmChecked(){
-		cbtnPressed = false;
-	}
-	
-	String getPath() {
-		return textfield.getText();
-	}
-	
-	int[] getDims(){
-		int[] dims = {Integer.parseInt((String)(rows.getSelectedItem())), 
-				Integer.parseInt((String)(cols.getSelectedItem()))};
-		return dims;
-	}
-	
-	boolean isRGB(){
-		return colorselect.getSelectedIndex() == 0 ? true : false;
+	private void save(String path){
+		//TODO
 	}
 }

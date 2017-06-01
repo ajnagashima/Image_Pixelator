@@ -27,19 +27,38 @@ import java.awt.Color;
 public class Main extends JFrame{
 	BufferedImage base;
 	OpeningFrame oFrame;
+	EditorFrame eFrame;
+	Color[][] pixels;
+	
 	public Main() {
 		oFrame = new OpeningFrame();
 		while( true )
 		{
 			if(oFrame.confirmPressed()){
 				oFrame.confirmChecked();
+				if(oFrame.getPath().equals(""))
+					break;
 				if(open(oFrame.getPath()))
 					break;
+
 			}
 			try{Thread.sleep(10);}
 			catch (Exception e){}
 		}
 		oFrame.dispose();
+		
+		makeGrid();
+		eFrame = new EditorFrame(pixels);
+	}
+	
+	void makeGrid(){
+		pixels = new Color[oFrame.getDims()[0]][oFrame.getDims()[1]];
+		if(base == null){
+			for(int r = 0; r < pixels.length; r++)
+				for(int c = 0; c < pixels[0].length; c++)
+					pixels[r][c] = new Color(255,255,255);
+		}
+		
 	}
 
 	boolean open(String path) {
